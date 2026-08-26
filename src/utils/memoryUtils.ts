@@ -56,10 +56,17 @@ export function synthesizeTurnStoryMemory(
   }
 
   // Clean raw story text from codeblocks, tag markers, and excess blank lines
-  const cleanText = fullMainText
+  let cleanText = fullMainText
     .replace(/```[a-z]*\n[\s\S]*?```/g, "")
     .replace(/<\/?[^>]+(>|$)/g, "")
+    .replace(/<json_ToMau>[\s\S]*?<\/json_ToMau>/g, "")
     .trim();
+    
+  cleanText = cleanText.replace(/\[mau:dâm thủy\]/gi, "[damThuy:dâm thủy]");
+  cleanText = cleanText.replace(/\[mau:tinh dịch\]/gi, "[damThuy:tinh dịch]");
+  cleanText = cleanText.replace(/\[mau:mồ hôi\]/gi, "[damThuy:mồ hôi]");
+  cleanText = cleanText.replace(/\[mau:/g, "[huyet:");
+
 
   // Extract key dialogue quotes (e.g., 「...」, 《...》, 【...】:, "...")
   const dialogues: string[] = [];

@@ -3267,7 +3267,7 @@ ${dramaPromptText ? `- GỢI Ý/YÊU CẦU KỊCH TÍNH TỪ NGƯỜI CHƠI (AI 
       .join("");
     const finalPlayerRules = (playerRules || "") + activePresetsText;
 
-    const systemInstruction = getGameplaySystemInstruction(
+    let systemInstruction = getGameplaySystemInstruction(
       isFirstTurn,
       targetWordCount,
       temperature,
@@ -3290,6 +3290,13 @@ ${dramaPromptText ? `- GỢI Ý/YÊU CẦU KỊCH TÍNH TỪ NGƯỜI CHƠI (AI 
       customNpcFields,
       gameData?.disableDefaultNpcRelationships || false
     );
+    
+    // [PATCH] Final scrub of the system instruction to catch any leaked old tags from user presets or other places
+    systemInstruction = systemInstruction.replace(/<json_ToMau>[\s\S]*?<\/json_ToMau>/g, "");
+    systemInstruction = systemInstruction.replace(/\[mau:dâm thủy\]/gi, "[damThuy:dâm thủy]");
+    systemInstruction = systemInstruction.replace(/\[mau:tinh dịch\]/gi, "[damThuy:tinh dịch]");
+    systemInstruction = systemInstruction.replace(/\[mau:mồ hôi\]/gi, "[damThuy:mồ hôi]");
+
 
     const prompt = `Đây là dữ liệu của lượt chơi này:\n\n${contextStr}\n\n[LỜI NHẮC CỐT LÕI]:\n1. BẮT BUỘC DUY TRÌ ĐẦY ĐỦ Tháng và Năm trong trường worldTime (Tuyệt đối không cắt bỏ).\n2. KIỂM TRA CHÉO TÊN, TUỔI, NGOẠI HÌNH CỦA TỪNG NPC ĐANG ĐI CÙNG TRONG CẢNH, TUYỆT ĐỐI KHÔNG LẤY RÂU ÔNG NỌ CẮM CẰM BÀ KIA, KHÔNG NHẦM LẪN TUỔI HAY NGOẠI HÌNH CỦA NPC NÀY SANG NPC KHÁC!\n\nHãy tiến hành BƯỚC 0, BƯỚC 1, và BƯỚC 2 theo đúng thứ tự.
 
@@ -3313,8 +3320,16 @@ ${dramaPromptText ? `- GỢI Ý/YÊU CẦU KỊCH TÍNH TỪ NGƯỜI CHƠI (AI 
       let fullThought = "";
       let lastUsage: any = null;
       const startTime = performance.now();
+      // [PATCH] Scrub the prompt of any lingering <json_ToMau> or [mau:dâm thủy] from past memory
+      let sanitizedPrompt = prompt;
+      sanitizedPrompt = sanitizedPrompt.replace(/<json_ToMau>[\s\S]*?<\/json_ToMau>/g, "");
+      sanitizedPrompt = sanitizedPrompt.replace(/\[mau:dâm thủy\]/gi, "[damThuy:dâm thủy]");
+      sanitizedPrompt = sanitizedPrompt.replace(/\[mau:tinh dịch\]/gi, "[damThuy:tinh dịch]");
+      sanitizedPrompt = sanitizedPrompt.replace(/\[mau:mồ hôi\]/gi, "[damThuy:mồ hôi]");
+      sanitizedPrompt = sanitizedPrompt.replace(/\[mau:/g, "[huyet:"); // Any remaining [mau: becomes [huyet:
+
       const stream = aiService.generateStreamingContent(
-        prompt,
+        sanitizedPrompt,
         undefined,
         systemInstruction,
       );
