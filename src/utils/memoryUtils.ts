@@ -65,6 +65,7 @@ export function synthesizeTurnStoryMemory(
   cleanText = cleanText.replace(/\[mau:dâm thủy\]/gi, "[damThuy:dâm thủy]");
   cleanText = cleanText.replace(/\[mau:tinh dịch\]/gi, "[damThuy:tinh dịch]");
   cleanText = cleanText.replace(/\[mau:mồ hôi\]/gi, "[damThuy:mồ hôi]");
+  cleanText = cleanText.replace(/\[mau:nước bọt\]/gi, "[damThuy:nước bọt]");
   cleanText = cleanText.replace(/\[mau:/g, "[huyet:");
 
 

@@ -3296,6 +3296,7 @@ ${dramaPromptText ? `- GỢI Ý/YÊU CẦU KỊCH TÍNH TỪ NGƯỜI CHƠI (AI 
     systemInstruction = systemInstruction.replace(/\[mau:dâm thủy\]/gi, "[damThuy:dâm thủy]");
     systemInstruction = systemInstruction.replace(/\[mau:tinh dịch\]/gi, "[damThuy:tinh dịch]");
     systemInstruction = systemInstruction.replace(/\[mau:mồ hôi\]/gi, "[damThuy:mồ hôi]");
+    systemInstruction = systemInstruction.replace(/\[mau:nước bọt\]/gi, "[damThuy:nước bọt]");
 
 
     const prompt = `Đây là dữ liệu của lượt chơi này:\n\n${contextStr}\n\n[LỜI NHẮC CỐT LÕI]:\n1. BẮT BUỘC DUY TRÌ ĐẦY ĐỦ Tháng và Năm trong trường worldTime (Tuyệt đối không cắt bỏ).\n2. KIỂM TRA CHÉO TÊN, TUỔI, NGOẠI HÌNH CỦA TỪNG NPC ĐANG ĐI CÙNG TRONG CẢNH, TUYỆT ĐỐI KHÔNG LẤY RÂU ÔNG NỌ CẮM CẰM BÀ KIA, KHÔNG NHẦM LẪN TUỔI HAY NGOẠI HÌNH CỦA NPC NÀY SANG NPC KHÁC!\n\nHãy tiến hành BƯỚC 0, BƯỚC 1, và BƯỚC 2 theo đúng thứ tự.
@@ -3326,6 +3327,7 @@ ${dramaPromptText ? `- GỢI Ý/YÊU CẦU KỊCH TÍNH TỪ NGƯỜI CHƠI (AI 
       sanitizedPrompt = sanitizedPrompt.replace(/\[mau:dâm thủy\]/gi, "[damThuy:dâm thủy]");
       sanitizedPrompt = sanitizedPrompt.replace(/\[mau:tinh dịch\]/gi, "[damThuy:tinh dịch]");
       sanitizedPrompt = sanitizedPrompt.replace(/\[mau:mồ hôi\]/gi, "[damThuy:mồ hôi]");
+      sanitizedPrompt = sanitizedPrompt.replace(/\[mau:nước bọt\]/gi, "[damThuy:nước bọt]");
       sanitizedPrompt = sanitizedPrompt.replace(/\[mau:/g, "[huyet:"); // Any remaining [mau: becomes [huyet:
 
       const stream = aiService.generateStreamingContent(

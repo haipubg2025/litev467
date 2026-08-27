@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   PlusCircle, 
@@ -12,7 +12,8 @@ import {
   Database,
   Monitor,
   Smartphone,
-  MonitorSmartphone
+  MonitorSmartphone,
+  X
 } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { toast } from '../utils/toast';
@@ -32,6 +33,8 @@ const MENU_ITEMS = [
 ] as const;
 
 export default function Sidebar({ onMobileSelect }: SidebarProps) {
+  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
   const theme = useStore(state => state.theme);
   const resumeLatestGame = useStore(state => state.resumeLatestGame);
   const uiMode = useStore(state => state.uiMode);
@@ -62,13 +65,56 @@ export default function Sidebar({ onMobileSelect }: SidebarProps) {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-3 mb-12"
           >
-            <div className={`p-2 rounded-lg border ${theme.accentClass}`}>
-              <Gamepad2 className="w-6 h-6" />
+            <div 
+              className={`p-1 rounded-lg border ${theme.accentClass} cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0 flex items-center justify-center`}
+              onClick={() => setIsLogoModalOpen(true)}
+              style={{ width: '48px', height: '48px' }}
+            >
+              {!logoError ? (
+                <img 
+                  src="/logo.png" 
+                  alt="Game Logo" 
+                  className="w-full h-full object-cover rounded-md"
+                  onError={() => setLogoError(true)}
+                />
+              ) : (
+                <div className="text-[10px] text-center font-bold leading-tight">
+                  No<br/>Logo
+                </div>
+              )}
             </div>
             <h1 className={`text-xl font-bold tracking-tighter flex flex-col ${theme.textPrimary}`}>
               <span>MATRIX LITE v6</span>
             </h1>
           </motion.div>
+          
+          <AnimatePresence>
+            {isLogoModalOpen && !logoError && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                onClick={() => setIsLogoModalOpen(false)}
+              >
+                <motion.img
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0.9 }}
+                  src="/logo.png"
+                  alt="Full Logo"
+                  className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <button
+                  className="absolute top-4 right-4 p-2 bg-black/50 text-white rounded-full hover:bg-white/20 transition-colors"
+                  onClick={() => setIsLogoModalOpen(false)}
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <nav className="space-y-2">
             {MENU_ITEMS.map((item, index) => {

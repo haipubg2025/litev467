@@ -893,6 +893,49 @@ function EditableRelationshipArrayField({
   );
 }
 
+
+const InventoryItemDisplay = ({ item, isDark }: { item: any; isDark: boolean }) => {
+  const [expanded, setExpanded] = useState(false);
+  
+  return (
+    <div
+      className={`p-3 rounded-xl flex items-start gap-3 transition-transform ${expanded ? '' : 'hover:-translate-y-1'} ${isDark ? "bg-white/5 border border-white/5 hover:bg-white/10" : "bg-white border border-slate-200 shadow-sm hover:shadow-md"} cursor-pointer`}
+      onClick={() => setExpanded(!expanded)}
+    >
+      <div
+        className={`px-2.5 py-1 min-w-[2.5rem] h-fit rounded-md flex items-center justify-center shrink-0 ${isDark ? "bg-white/10 text-white/70" : "bg-slate-100 text-slate-600"}`}
+      >
+        <span className="font-mono font-bold text-sm">
+          {item.quantity}
+        </span>
+      </div>
+      <div className="flex-1 min-w-0 mt-0.5">
+        <div className="flex justify-between items-start">
+          <h4
+            className={`text-sm font-bold break-words leading-tight ${isDark ? "text-white" : "text-slate-900"} pr-2`}
+          >
+            {item.name}
+          </h4>
+          {item.description && (
+            <div className={`shrink-0 mt-0.5 ${isDark ? "text-white/40" : "text-slate-400"}`}>
+              {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </div>
+          )}
+        </div>
+        
+        {expanded && item.description && (
+          <p
+            className={`text-xs mt-2 pt-2 border-t ${isDark ? "border-white/10 text-white/70" : "border-slate-100 text-slate-600"} leading-relaxed break-words`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {item.description}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function CharacterModal({
   type,
   npcIndex,
@@ -2726,32 +2769,7 @@ LƯU Ý:
                           ) : Array.isArray(editedData.inventory) ? (
                             editedData.inventory.map(
                               (item: any, idx: number) => (
-                                <div
-                                  key={`char-item-${item.id || ""}-${idx}`}
-                                  className={`p-4 rounded-xl flex items-start gap-4 transition-transform hover:-translate-y-1 ${isDark ? "bg-white/5 border border-white/5 hover:bg-white/10" : "bg-white border border-slate-200 shadow-sm hover:shadow-md"}`}
-                                >
-                                  <div
-                                    className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${isDark ? "bg-white/10 text-white/70" : "bg-slate-100 text-slate-600"}`}
-                                  >
-                                    <span className="font-mono font-black">
-                                      {item.quantity}
-                                    </span>
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h4
-                                      className={`text-sm font-bold truncate ${isDark ? "text-white" : "text-slate-900"}`}
-                                    >
-                                      {item.name}
-                                    </h4>
-                                    {item.description && (
-                                      <p
-                                        className={`text-xs mt-1 leading-relaxed ${isDark ? "text-white/60" : "text-slate-500"}`}
-                                      >
-                                        {item.description}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
+                                <InventoryItemDisplay key={`char-item-${item.id || ""}-${idx}`} item={item} isDark={isDark} />
                               ),
                             )
                           ) : (
